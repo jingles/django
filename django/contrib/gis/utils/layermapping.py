@@ -544,7 +544,12 @@ class LayerMapping(object):
 
                     try:
                         # Attempting to save.
-                        m.save(using=self.using)
+                        # state of M does not always appear guaranteed to be a model
+                        # and therefore may not have "using" as a keyword argument!
+                        try:
+                            m.save(using=self.using)
+                        except TypeError,t:
+                            m.save()
                         num_saved += 1
                         if verbose: stream.write('%s: %s\n' % ('Updated' if is_update else 'Saved', m))
                     except SystemExit:
